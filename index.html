@@ -94,7 +94,7 @@
             text-transform: uppercase;
         }
 
-        .lang-switcher button {
+        .lang-switcher button, .sound-toggle {
             background: none;
             border: 1px solid rgba(255,255,255,0.2);
             color: #fff;
@@ -108,6 +108,11 @@
         .lang-switcher button.active {
             background: #fff;
             color: #000;
+        }
+
+        .sound-toggle.muted {
+            opacity: 0.5;
+            text-decoration: line-through;
         }
 
         .bottom-panel {
@@ -162,6 +167,8 @@
 </head>
 <body>
 
+<audio id="bg-music" src="1.mp3" loop></audio>
+
 <div class="video-background">
     <video id="bg-video" autoplay muted loop playsinline>
         <source src="mobile_aria.mp4" type="video/mp4" media="(max-width: 768px)">
@@ -181,6 +188,7 @@
             MEM_PRIORITY: HIGH
         </div>
         <div class="lang-switcher">
+            <button onclick="toggleSound()" class="sound-toggle" id="sound-btn">SOUND ON</button>
             <button onclick="setLang('en')" id="btn-en">EN</button>
             <button onclick="setLang('ru')" id="btn-ru">RU</button>
             <button onclick="setLang('tr')" id="btn-tr">TR</button>
@@ -220,12 +228,28 @@
         status: "Sistem hazır. Bağlantı: Şifreli"
     }
 };
+
+    const music = document.getElementById('bg-music');
+    const soundBtn = document.getElementById('sound-btn');
+
+    function toggleSound() {
+        if (music.paused) {
+            music.play();
+            soundBtn.innerText = "SOUND ON";
+            soundBtn.classList.remove('muted');
+        } else {
+            music.pause();
+            soundBtn.innerText = "SOUND OFF";
+            soundBtn.classList.add('muted');
+        }
+    }
+
     function setLang(lang) {
         document.querySelectorAll('[data-key]').forEach(elem => {
             elem.innerText = translations[lang][elem.getAttribute('data-key')];
         });
 
-        document.querySelectorAll('.lang-switcher button').forEach(btn => {
+        document.querySelectorAll('.lang-switcher button:not(.sound-toggle)').forEach(btn => {
             btn.classList.toggle('active', btn.id === `btn-${lang}`);
         });
         localStorage.setItem('selected_lang', lang);
@@ -233,8 +257,18 @@
 
     setLang(localStorage.getItem('selected_lang') || 'en');
 
+    // Запуск при первом взаимодействии (браузеры блокируют автоплей со звуком)
     document.addEventListener('touchstart', function() {
         document.getElementById('bg-video').play();
+        if (music.paused && !soundBtn.classList.contains('muted')) {
+            music.play();
+        }
+    }, {once: true});
+
+    document.addEventListener('click', function() {
+        if (music.paused && !soundBtn.classList.contains('muted')) {
+            music.play();
+        }
     }, {once: true});
 </script>
 
