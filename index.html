@@ -65,6 +65,14 @@
             padding: 50px;
         }
 
+        /* Адаптивность для мобилок */
+        @media (max-width: 768px) {
+            .ui-wrapper { padding: 30px 20px; }
+            h1 { font-size: 2.5rem !important; }
+            .model-specs { font-size: 0.6rem !important; }
+            .btn-connect { width: 100%; padding: 18px 30px !important; text-align: center; }
+        }
+
         /* Верхняя панель: Языки и параметры */
         header {
             display: flex;
@@ -96,7 +104,7 @@
             color: #000;
         }
 
-        /* Нижний блок: Имя и Кнопка (Сдвинуто вниз) */
+        /* Нижний блок: Имя и Кнопка */
         .bottom-panel {
             text-align: left;
             max-width: 800px;
@@ -119,8 +127,9 @@
             padding-left: 15px;
         }
 
-        /* Кнопка в стиле Cyberpunk/Minimal */
+        /* Кнопка */
         .btn-connect {
+            display: inline-block;
             padding: 20px 60px;
             background: #fff;
             color: #000;
@@ -129,12 +138,13 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
+            text-decoration: none;
             transition: 0.4s;
             clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
         }
 
         .btn-connect:hover {
-            background: #00f3ff; /* Яркий неоновый акцент при наведении */
+            background: #00f3ff;
             transform: translateX(10px);
         }
 
@@ -144,13 +154,15 @@
             font-family: monospace;
             color: #00f3ff;
         }
-
     </style>
 </head>
 <body>
 
 <div class="video-background">
-    <video autoplay muted loop playsinline>
+    <video id="bg-video" autoplay muted loop playsinline>
+        <!-- Мобильное видео (если экран < 768px) -->
+        <source src="mobile_aria.mp4" type="video/mp4" media="(max-width: 768px)">
+        <!-- Основное видео -->
         <source src="aria.mp4" type="video/mp4">
     </video>
 </div>
@@ -176,9 +188,9 @@
     <div class="bottom-panel">
         <h1 data-key="name">ARIA</h1>
         <p class="description" data-key="desc">
-            High-performance AI model. Advanced personality matrix. Virtual companionship redefined.
+            Adaptive neural companion refined for immersive conversation, emotional intelligence, and intimate late-night chemistry.
         </p>
-        <button class="btn-connect" data-key="cta">Establish Connection</button>
+        <a href="https://t.me/sinorama" class="btn-connect" data-key="cta">Establish Connection</a>
         <div class="status-bar">
             > <span data-key="status">System ready. Waiting for input...</span>
         </div>
@@ -218,6 +230,11 @@
     }
 
     setLang(localStorage.getItem('selected_lang') || 'en');
+
+    // Форсированный запуск видео для мобильных (Safari fix)
+    document.addEventListener('touchstart', function() {
+        document.getElementById('bg-video').play();
+    }, {once: true});
 </script>
 
 </body>
